@@ -1,0 +1,122 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# docker-compose.yaml
+# ─────────────────────────────────────────────────────────────────────────────
+
+version: "3.9"
+
+services:
+
+  # ── MLflow Tracking Server ─────────────────────────────────────────────────
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.13.0
+    container_name: mlflow_server
+    ports:
+      - "5001:5000"
+
+
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        mkdir -p /mlflow/db /mlflow/artefacts
+        chmod -R 777 /mlflow
+        mlflow server \
+          --host 0.0.0.0 \
+          --port 5000 \
+          --backend-store-uri sqlite:////mlflow/db/mlflow.db \
+          --default-artifact-root /mlflow/artefacts \
+          --serve-artifacts
+
+    environment:
+      - GIT_PYTHON_REFRESH=quiet
+
+    volumes:
+      - mlflow_data:/mlflow
+
+    networks:
+      - ml_network
+
+    restart: unless-stopped
+
+    healthcheck:
+      test:
+        - "CMD"
+        - "python"
+        - "-c"
+        - "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"
+      interval:     15s
+      timeout:      10s
+      retries:      5
+      start_period: 40s
+
+
+  # ── FastAPI Application ────────────────────────────────────────────────────
+  api:
+    build: .
+    container_name: research_center_api
+    ports:
+      - "8000:8000"
+
+    environment:
+      # Application
+      - APP_ENV=production
+      - DEBUG=false
+
+      # Data
+      - DATA_PATH=data/research_centers.csv
+
+      # Model hyperparameters
+      - N_CLUSTERS=3
+      - N_INIT=50
+      - MAX_ITER=300
+      - RANDOM_STATE=42
+
+
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+
+      - MLFLOW_EXPERIMENT_NAME=research_center_quality
+      - MLFLOW_MODEL_NAME=kmeans_quality_classifier
+
+      # Suppress git warning
+      - GIT_PYTHON_REFRESH=quiet
+
+      # Local artefact dir for pkl files the API loads
+      - ARTEFACT_DIR=/app/artefacts
+
+    volumes:
+      - api_artefacts:/app/artefacts
+
+    depends_on:
+      mlflow:
+        condition: service_healthy
+
+    networks:
+      - ml_network
+
+    restart: unless-stopped
+
+    healthcheck:
+      test:
+        - "CMD"
+        - "python"
+        - "-c"
+        - "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/live')"
+      interval:     30s
+      timeout:      10s
+      retries:      3
+      start_period: 20s
+
+
+# ── Named Volumes ──────────────────────────────────────────────────────────────
+volumes:
+  mlflow_data:
+    name: research_center_mlflow_data
+
+  api_artefacts:
+    name: research_center_api_artefacts
+
+
+# ── Network ────────────────────────────────────────────────────────────────────
+networks:
+  ml_network:
+    name:   ml_network
+    driver: bridge

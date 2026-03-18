@@ -1,10 +1,49 @@
-# Python-generated files
+# Python
 __pycache__/
-*.py[oc]
-build/
+*.py[cod]
+*.pyo
+*.egg-info/
 dist/
-wheels/
-*.egg-info
+build/
+*.egg
+.eggs/
 
 # Virtual environments
-.venv
+venv/
+.venv/
+env/
+
+
+# ML artefacts and models
+artefacts/
+*.pkl
+*.joblib
+
+# MLflow local run data
+mlruns/
+mlartifacts/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Logs
+*.log
+logs/
+
+# Docker
+.docker/

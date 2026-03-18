@@ -1,0 +1,42 @@
+# Version control
+.git/
+.gitignore
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+
+# Virtual environments
+venv/
+.venv/
+
+# ML artefacts
+artefacts/
+mlruns/
+
+# Jupyter notebooks
+*.ipynb
+.ipynb_checkpoints/
+
+# Test files
+tests/
+.pytest_cache/
+.coverage
+
+# IDE files
+.vscode/
+.idea/
+
+# Docs
+README.md
+*.png
+*.jpg
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

@@ -207,7 +207,7 @@ venv\Scripts\activate      # Windows
 pip install -r requirements.txt
 
 # Run the FastAPI app
-uvicorn app:app --reload
+uvicorn baseline_app:app --reload
 ```
 
 ---
