@@ -151,7 +151,7 @@ def create_app() -> FastAPI:
     @app.get(
         "/",
         tags=["Root"],
-        summary="API root — links to docs and health",
+        summary="API root: links to docs and health",
     )
     async def root() -> dict:
         return {

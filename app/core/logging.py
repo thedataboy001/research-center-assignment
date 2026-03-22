@@ -21,7 +21,7 @@ def get_logger(name: str) -> logging.Logger:
         name: typically __name__ of the calling module
 
     Returns:
-        Configured Logger instance
+        Configured Logger instance 
     """
     logger = logging.getLogger(name)
 

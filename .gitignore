@@ -11,10 +11,11 @@ build/
 # Virtual environments
 venv/
 .venv/
-env/
 
-
-# ML artefacts and models
+# Environment variables
+.env
+ 
+ # ML artefacts and models
 artefacts/
 *.pkl
 *.joblib
@@ -31,15 +32,6 @@ mlartifacts/
 .vscode/
 .idea/
 *.swp
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Test coverage
-.coverage
-htmlcov/
-.pytest_cache/
 
 # Logs
 *.log
